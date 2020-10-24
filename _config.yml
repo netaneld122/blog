@@ -1,9 +1,9 @@
 title: "Tech Blog"
 description: >- # this means to ignore newlines until "baseurl:"
   Just my two cents.
-baseurl: "/blog"
-url: "https://netaneld122.github.io"
-twitter_username: SegmentSamba
+baseurl: ""
+url: "https://nati.technology"
+#twitter_username: SegmentSamba
 
 # Build settings
 theme: minima
