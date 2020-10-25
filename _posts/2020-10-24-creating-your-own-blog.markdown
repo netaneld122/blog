@@ -4,7 +4,9 @@ title:  "Step by step - creating your own Tech Blog using GitHub Pages and Jekyl
 date:   2020-10-24
 ---
 
-If you don't want to read the bla-bla skip to the [Step by step](#step-by-step) section.
+![](/images/2020-10-25-21-58-25.png)
+
+If you the tl;dr then skip to the [Step by step](#step-by-step) section.
 
 ## Preface
 
