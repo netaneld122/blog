@@ -40,15 +40,17 @@ Alongside Jekyll, we will also install `bundler` - an enhancement of Ruby's pack
 
 1. Install [Ruby+Devkit](https://rubyinstaller.org/downloads/)
 1. Install Jekyll and Bundler by running:  
-    `gem install jekyll bundler`
+    * `gem install jekyll bundler`
 1. Run the following command to create your repository (enter your own name):  
-    `jekyll new <repo-name>`
+    * `jekyll new <repo-name>`
 1. Open `<repo-name>/Gemfile`
     * Remove the line with `gem "jekyll"` in it (github-pages will get the correct dependency)
     * Uncomment the line with `gem "github-pages"` in it
 1. Remove `<repo-name>/Gemfile.lock`
-1. Run `bundler install`
-1. Run `bundler exec jekyll serve`
+1. From within `<repo-name>` run
+    * `bundler install`
+1. And finally run
+    * `bundler exec jekyll serve`
 1. Browse `http://127.0.0.1:4000/`
 
 And voilà, you have your own blog.
@@ -58,7 +60,38 @@ And voilà, you have your own blog.
 If you haven't already configured your GitHub repository, do the following:
 
 1. Create a new repository (must be public, unless you have a pro account)
-1. Go to settings
+1. Under your GitHub user settings go to `Developer settings -> Personal access tokens -> Generate new token` and grant access to `public_repo`
+    * Copy the access token to your clipboard
+1. Go to the GitHub repository you just created and in the repo settings go to `Secrets` and create a new one secret called `JEKYLL_PAT` with the access token from your clipboard
+1. Inside the `<repo-name>` directory run:
+    * `git init`
+    * `git remote set-url origin git@github.com:<username>/<repo-name>.git`  
+1. Create a file under `<repo-name>/.github/workflows/github-pages.yml` and use [the content in the github-pages.yml section](#github-pages.yml)
+1. And finally push it all using
+    * `git push --all`
+1. Go to the repository settings and configure `gh-pages` as the source for GitHub Pages
+1. Browse `https://<username>.github.io/<repo-name>`
+
+
+### github-pages.yml
+
+```yml
+name: Build and deploy Jekyll site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  github-pages:
+    runs-on: ubuntu-16.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: helaili/jekyll-action@2.0.1
+        env:
+          JEKYLL_PAT: ${{ secrets.JEKYLL_PAT }}
+```
 
 
 [github-pages-versions]: https://pages.github.com/versions/
