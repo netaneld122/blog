@@ -72,6 +72,8 @@ This is a website I created based on `err.exe`'s internal database by exporting 
 
 You can search for hex values, decimal values and substrings of the error code names.
 
+![](/images/2020-10-26-21-54-08.png)
+
 ### Other websites
 
 * [https://james.darpinian.com/decoder/](https://james.darpinian.com/decoder/)
