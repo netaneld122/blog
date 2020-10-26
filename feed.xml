@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://nati.technology/feed.xml" rel="self" type="application/atom+xml" /><link href="https://nati.technology/" rel="alternate" type="text/html" /><updated>2020-10-26T20:01:21+00:00</updated><id>https://nati.technology/feed.xml</id><title type="html">Tech Blog</title><subtitle>Just my two cents.</subtitle><entry><title type="html">Looking up for Windows API error codes - tools and methods</title><link href="https://nati.technology/2020/10/26/error-code-lookup.html" rel="alternate" type="text/html" title="Looking up for Windows API error codes - tools and methods" /><published>2020-10-26T00:00:00+00:00</published><updated>2020-10-26T00:00:00+00:00</updated><id>https://nati.technology/2020/10/26/error-code-lookup</id><content type="html" xml:base="https://nati.technology/2020/10/26/error-code-lookup.html">&lt;h2 id=&quot;offline-tools&quot;&gt;Offline tools&lt;/h2&gt;
+
+&lt;h3 id=&quot;net-helpmsg&quot;&gt;net helpmsg&lt;/h3&gt;
+&lt;p&gt;This is a built-in Windows executable called net.exe that allows you to quickly search for exact error codes.&lt;/p&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;div class=&quot;language-ps highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;net&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;helpmsg&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Will output:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Access is denied.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;errexe-microsoft-error-lookup-tool&quot;&gt;err.exe (Microsoft Error Lookup Tool)&lt;/h3&gt;
+&lt;p&gt;This tool can be &lt;a href=&quot;https://www.microsoft.com/en-us/download/details.aspx?id=100432&quot;&gt;downloaded from Microsoft’s website&lt;/a&gt;, it’s more versatile than &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net helpmsg&lt;/code&gt; because it matches partial error codes and ambiguous values.&lt;br /&gt;
+Additionally it provides useful command line arguments for your convenience:&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;USAGE: err [opt] {value} [value] [value] ...
+ where &amp;lt;value&amp;gt; must be of one of the following forms:
+   1. decorated hex (0x54f)
+   2. implicit hex  (54f)
+   3. ambiguous     (1359)
+   4. exact string  (=ERROR_INTERNAL_ERROR)
+   5. substring     (:INTERNAL_ERROR)
+...and &amp;lt;opt&amp;gt; may be one of:
+   /:xml         - causes the output to be in XML-parseable form.
+                   To understand the output, try it.  It's pretty obvious.
+   /:listTables  - lists all the tables below in XML format.
+                   Again, the format is pretty straightforward.
+   /:outputtoCSV - lists all the tables below in CSV format.
+   /:outputtoJS  - lists all the tables below for use in JS.
+   /:outputtoCPP - lists all the tables below for a C++ header.
+   /:hresultfromwin32 - prints HRESULT_FROM_WIN32 errors for a C++ header.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;div class=&quot;language-ps highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;err&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;/winerror.h&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Will output:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;# winerror.h selected.
+# for hex 0x5 / decimal 5
+  ERROR_ACCESS_DENIED                                            winerror.h
+# Access is denied.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;windbg&quot;&gt;Windbg&lt;/h3&gt;
+&lt;p&gt;If you’re using a debugger, and you encounter an error code during your debugging session, the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;!error&lt;/code&gt; extension might be useful.&lt;/p&gt;
+
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;div class=&quot;language-ps highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nf&quot;&gt;!error&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;5&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;Will output:&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Error code: (Win32) 0x5 (5) - Access is denied.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;online-tools&quot;&gt;Online tools&lt;/h2&gt;
+
+&lt;h3 id=&quot;errorguru&quot;&gt;&lt;a href=&quot;https://error.guru&quot;&gt;error.guru&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;This is a website I created based on &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;err.exe&lt;/code&gt;’s internal database by exporting it to a CSV file and wrapping it all up with some fancy Vue.js components.&lt;/p&gt;
+
+&lt;p&gt;You can search for hex values, decimal values and substrings of the error code names.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/images/2020-10-26-21-54-08.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;other-websites&quot;&gt;Other websites&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://james.darpinian.com/decoder/&quot;&gt;https://james.darpinian.com/decoder/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name></name></author><summary type="html">Offline tools</summary></entry><entry><title type="html">Step by step - creating your own Tech Blog using GitHub Pages and Jekyll (free &amp;amp; ad-free)</title><link href="https://nati.technology/2020/10/24/creating-your-own-blog.html" rel="alternate" type="text/html" title="Step by step - creating your own Tech Blog using GitHub Pages and Jekyll (free &amp;amp; ad-free)" /><published>2020-10-24T00:00:00+00:00</published><updated>2020-10-24T00:00:00+00:00</updated><id>https://nati.technology/2020/10/24/creating-your-own-blog</id><content type="html" xml:base="https://nati.technology/2020/10/24/creating-your-own-blog.html">&lt;p&gt;&lt;img src=&quot;/images/2020-10-25-21-58-25.png&quot; alt=&quot;&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you want the TL;DR then skip to the &lt;a href=&quot;#step-by-step&quot;&gt;Step by step&lt;/a&gt; section.&lt;/p&gt;
+
+&lt;h2 id=&quot;preface&quot;&gt;Preface&lt;/h2&gt;
+
+&lt;p&gt;This is the first post in my blog, so I thought it would be nice to walk through the process of creating a simple static blog for you - software developers and researchers out there.&lt;/p&gt;
+
+&lt;p&gt;Instead of spending money on boilerplate WordPress and hosting servers, you can use free and more importantly ad-free platforms that are available for everyone.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;There are several tutorials from GitHub and Jekyll themselves, but in my opinion theirs can be a bit overwhelming with many links and contradicting steps, so my main goal is to simplify that by showing the way I configured everything.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;github-pages&quot;&gt;GitHub Pages&lt;/h2&gt;
+
+&lt;p&gt;GitHub Pages is a feature of existing GitHub repositories, allowing you to treat the repository as a platform for creating static web pages, it hosts (and optionally generates) your HTML files and displays them from within &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;github.io&lt;/code&gt;’s subdomains.&lt;/p&gt;
+
+&lt;h2 id=&quot;github-workflows&quot;&gt;GitHub Workflows&lt;/h2&gt;
+
+&lt;p&gt;GitHub Workflows is yet another feature you can use in GitHub repositories, allowing you to automate your build, test and deployment process using &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.yml&lt;/code&gt; files.&lt;/p&gt;
+
+&lt;p&gt;In our case we’ll be using it to generate our static pages.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-github-pages-gem&quot;&gt;The github-pages gem&lt;/h3&gt;
+
+&lt;p&gt;We are going to create a simple workflow to generate our pages, but the remote build system has &lt;a href=&quot;https://pages.github.com/versions/&quot;&gt;specific versions and dependencies&lt;/a&gt; that may differ from your local configuration - here enters the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;github-pages&lt;/code&gt; library (in Ruby called a “gem”).&lt;/p&gt;
+
+&lt;p&gt;This library makes sure that the local and remote dependencies will remain consistent and nothing unexpected occurs when deploying your website.&lt;/p&gt;
+
+&lt;p&gt;So what we’re going to do is depend on the latest &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;github-pages&lt;/code&gt; gem, and in turn it will depend on the correct dependency gems.&lt;/p&gt;
+
+&lt;h2 id=&quot;jekyll&quot;&gt;Jekyll&lt;/h2&gt;
+
+&lt;p&gt;Jekyll is a Ruby based gem that generates static web pages from markdown files, and optionally HTML/JS/CSS files.&lt;/p&gt;
+
+&lt;p&gt;If you need a refresher on how to use the markdown syntax - &lt;a href=&quot;https://github.com/mnyrop/nycdh-jekyll/blob/master/docs/markdown-cheatsheet.md&quot;&gt;this cheat sheet&lt;/a&gt; can help you.&lt;/p&gt;
+
+&lt;p&gt;Alongside Jekyll, we will also install &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundler&lt;/code&gt; - an enhancement of Ruby’s package management capabilities - this is necessary because the github-pages gem relies on it.&lt;/p&gt;
+
+&lt;h2 id=&quot;step-by-step&quot;&gt;Step by step&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Install &lt;a href=&quot;https://rubyinstaller.org/downloads/&quot;&gt;Ruby+Devkit&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Install Jekyll and Bundler by running:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gem install jekyll bundler&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Run the following command to create your repository (enter your own repo-name):
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll new &amp;lt;repo-name&amp;gt;&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Open &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;repo-name&amp;gt;/Gemfile&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Remove the line with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gem &quot;jekyll&quot;&lt;/code&gt; in it (github-pages will get the correct dependency)&lt;/li&gt;
+      &lt;li&gt;Uncomment the line with &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gem &quot;github-pages&quot;&lt;/code&gt; in it&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Remove &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;repo-name&amp;gt;/Gemfile.lock&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;From within &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;repo-name&amp;gt;&lt;/code&gt; run
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundler install&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;And finally run
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundler exec jekyll serve&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Browse &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://127.0.0.1:4000/&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;And voilà, you have your own blog.&lt;/p&gt;
+
+&lt;h2 id=&quot;connecting-to-github&quot;&gt;Connecting to GitHub&lt;/h2&gt;
+
+&lt;p&gt;If you haven’t already configured your GitHub repository, do the following:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Create a new repository (must be public, unless you have a pro account)&lt;/li&gt;
+  &lt;li&gt;Under your GitHub user settings go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Developer settings -&amp;gt; Personal access tokens -&amp;gt; Generate new token&lt;/code&gt; and grant access to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;public_repo&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Copy the access token to your clipboard&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Go to the GitHub repository you just created and in the repo settings go to &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Secrets&lt;/code&gt; and create a new one secret called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;JEKYLL_PAT&lt;/code&gt; with the access token from your clipboard&lt;/li&gt;
+  &lt;li&gt;Inside the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;repo-name&amp;gt;&lt;/code&gt; directory run:
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git init&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git remote add origin git@github.com:&amp;lt;username&amp;gt;/&amp;lt;repo-name&amp;gt;.git&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git add .&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git commit -m &quot;Initial commit&quot;&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Create a file under &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;repo-name&amp;gt;/.github/workflows/github-pages.yml&lt;/code&gt; and use &lt;a href=&quot;#github-pages.yml&quot;&gt;the content in the github-pages.yml section&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;And finally push it all using
+    &lt;ul&gt;
+      &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git push --all&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;After about 3 minutes the GitHub workflow action will finish running and eventually deploy the final website files to a branch called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Go to the repository settings and configure &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gh-pages&lt;/code&gt; as the source for GitHub Pages&lt;/li&gt;
+  &lt;li&gt;Browse &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://&amp;lt;username&amp;gt;.github.io/&amp;lt;repo-name&amp;gt;&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Now your blog is accessible to everyone.&lt;/p&gt;
+
+&lt;h3 id=&quot;github-pagesyml&quot;&gt;github-pages.yml&lt;/h3&gt;
+
+&lt;div class=&quot;language-yml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Build and deploy Jekyll site to GitHub Pages&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;branches&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;main&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;jobs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;github-pages&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;runs-on&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ubuntu-16.04&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;steps&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;uses&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;actions/checkout@v2&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;uses&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;helaili/jekyll-action@2.0.1&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;JEKYLL_PAT&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;${{ secrets.JEKYLL_PAT }}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;some-extras&quot;&gt;Some extras&lt;/h2&gt;
+
+&lt;p&gt;If you’re using VS code as your IDE, then consider the following:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Add the &lt;strong&gt;Code Spell Checker&lt;/strong&gt; extension - this can save you from unnecessary typos as it verifies markdown files&lt;/li&gt;
+  &lt;li&gt;Add the &lt;strong&gt;Paste Image&lt;/strong&gt; extension - to easily embed images from your clipboard (use &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WinKey + Shift + S&lt;/code&gt; and then &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ctrl + Alt + V&lt;/code&gt; to paste)&lt;/li&gt;
+  &lt;li&gt;Create a file called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&amp;lt;repo-name&amp;gt;/.vscode/tasks.json&lt;/code&gt; with the content mentioned below, this will allow you to serve the website locally using the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ctrl + Shift + B&lt;/code&gt; keys:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;tasksjson&quot;&gt;tasks.json&lt;/h3&gt;
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;version&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2.0.0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;tasks&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;label&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Serve&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;type&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;shell&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;command&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;bundle exec jekyll serve&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;problemMatcher&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;group&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;kind&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;build&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+                &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;isDefault&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+            &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;ul&gt;
+  &lt;li&gt;You can also &lt;a href=&quot;own-domain&quot;&gt;configure GitHub Pages to use your own domain&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This tutorial came out a little bit tedious, but once you configure everything it is pretty convenient to create content.&lt;/p&gt;
+
+&lt;p&gt;Hopefully the next posts will be much more interesting :)&lt;/p&gt;</content><author><name></name></author><summary type="html"></summary></entry></feed>
