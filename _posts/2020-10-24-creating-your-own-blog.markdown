@@ -135,6 +135,8 @@ If you're using VS code as your IDE, then consider the following:
 
 This tutorial came out a little bit tedious, but once you configure everything it is pretty convenient to create content.
 
+Hopefully the next posts will be much more interesting :)
+
 
 [github-pages-versions]: https://pages.github.com/versions/
 [cheat-sheet]: https://github.com/mnyrop/nycdh-jekyll/blob/master/docs/markdown-cheatsheet.md
